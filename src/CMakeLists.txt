@@ -1,0 +1,9 @@
+add_executable(
+    ddPCM.x
+    main.f90
+    ddcosmo.f90  
+    efld.f90
+    forces.f90
+    llgnew.f
+    mkrhs.f90
+    )
