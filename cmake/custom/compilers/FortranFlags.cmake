@@ -34,7 +34,7 @@ if(NOT DEFINED ENV{FCFLAGS})
                     "-traceback"  # Intel and PGI
                     )
   set_compiler_flag(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG}" Fortran REQUIRED
-                    "-fbounds-check -finit-local=zero" # GNU
+                    "-fbounds-check -finit-local-zero" # GNU
                     "-check all -ftrapuv"  # Intel
                     "-Ktrap=fp -Mbounds -Mchkptr -Mchkfpstk -Mchkstk" # PGI
                     )
