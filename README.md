@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/robertodr/ddPCM.svg?branch=master)](https://travis-ci.org/robertodr/ddPCM)
+[![Build Status](https://travis-ci.org/PCMSolver/ddPCM.svg?branch=master)](https://travis-ci.org/PCMSolver/ddPCM)
 
 # ddPCM
 A fast domain decomposition based implementation of the COSMO solvation model
