@@ -1,9 +1,5 @@
-add_executable(
-    ddPCM.x
-    main.f90
+add_library(
+    ddPCM
     ddcosmo.f90
-    efld.f90
-    forces.f90
     sphere_lebedev_rule.f90
-    mkrhs.f90
     )
