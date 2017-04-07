@@ -1,26 +1,26 @@
-# CMakeLists.txt and setup script will be generated from this file
-# see: http://autocmake.readthedocs.io/en/latest/developers/configuration.html
-# adapt the following lines and expand
-
 name: ddPCM
-
 min_cmake_version: 3.3
-
 url_root: https://github.com/coderefinery/autocmake/raw/master/
-
 default_build_type: debug
 
 modules:
 - plugins:
   - source:
     - '%(url_root)modules/default_build_paths.cmake'
-    - '%(url_root)modules/omp.cmake'
+    - '%(url_root)modules/definitions.cmake'
+    - '%(url_root)modules/safeguards.cmake'
 - compilers:
   - source:
     - '%(url_root)modules/fc.cmake'
-- src_support:
+    - '%(url_root)modules/omp.cmake'
+    - 'custom/compilers/FortranFlags.cmake'
+- general:
   - source:
+    - '%(url_root)modules/git_info/git_info.cmake'
+    - '%(url_root)modules/python_interpreter.cmake'
     - '%(url_root)modules/src.cmake'
+    - 'custom/test.cmake'
+    - 'custom/summary.cmake'
 
 
 

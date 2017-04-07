@@ -1,0 +1,43 @@
+
+      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b. 
+      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b
+      888      888 888    888 888     888 Y88b.      88888b.d88888 888     888
+  .d88888  .d88888 888        888     888  "Y888b.   888Y88888P888 888     888
+ d88" 888 d88" 888 888        888     888     "Y88b. 888 Y888P 888 888     888
+ 888  888 888  888 888    888 888     888       "888 888  Y8P  888 888     888
+ Y88b 888 Y88b 888 Y88b  d88P Y88b. .d88P Y88b  d88P 888   "   888 Y88b. .d88P
+  "Y88888  "Y88888  "Y8888P"   "Y88888P"   "Y8888P"  888       888  "Y88888P" 
+                                                                              
+ An implementation of COSMO using a domain decomposition linear scaling strategy.
+
+ parameters:
+   number of grid points:                       110
+   number of spheres:                           642
+   lmax for the spherical harmonics basis:        6
+   convergence threshold:                   0.1D-06
+   regularization parameter:                   0.10
+
+ energy at iteration    1:     -1.0677035 error (rms,max):     0.0444009     0.1338093
+ energy at iteration    2:     -1.4074017 error (rms,max):     0.0214033     0.0662253
+ energy at iteration    3:     -1.6085753 error (rms,max):     0.0112560     0.0305786
+ energy at iteration    4:     -1.7272202 error (rms,max):     0.0072256     0.0172823
+ energy at iteration    5:     -1.8988984 error (rms,max):     0.0049954     0.0124982
+ energy at iteration    6:     -1.9429558 error (rms,max):     0.0019887     0.0051902
+ energy at iteration    7:     -1.9579364 error (rms,max):     0.0008422     0.0030364
+ energy at iteration    8:     -1.9667281 error (rms,max):     0.0004422     0.0017624
+ energy at iteration    9:     -1.9698465 error (rms,max):     0.0002122     0.0008328
+ energy at iteration   10:     -1.9713077 error (rms,max):     0.0000921     0.0003101
+ energy at iteration   11:     -1.9720757 error (rms,max):     0.0000438     0.0001216
+ energy at iteration   12:     -1.9723491 error (rms,max):     0.0000194     0.0000548
+ energy at iteration   13:     -1.9724290 error (rms,max):     0.0000080     0.0000266
+ energy at iteration   14:     -1.9724705 error (rms,max):     0.0000038     0.0000147
+ energy at iteration   15:     -1.9724865 error (rms,max):     0.0000020     0.0000075
+ energy at iteration   16:     -1.9724920 error (rms,max):     0.0000009     0.0000035
+ energy at iteration   17:     -1.9724962 error (rms,max):     0.0000004     0.0000015
+ energy at iteration   18:     -1.9724983 error (rms,max):     0.0000002     0.0000006
+ energy at iteration   19:     -1.9724988 error (rms,max):     0.0000001     0.0000003
+
+ the solution to the ddCOSMO equations took    2.384 seconds.
+
+ ddcosmo electrostatic solvation energy (kcal/mol):  -1237.761675226723
+ maximum quantity of memory allocated:     2075648

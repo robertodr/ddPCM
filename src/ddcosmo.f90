@@ -1,15 +1,15 @@
 module ddcosmo
 implicit none
-! 
-!      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b.  
-!      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b 
-!      888      888 888    888 888     888 Y88b.      88888b.d88888 888     888 
-!  .d88888  .d88888 888        888     888  "Y888b.   888Y88888P888 888     888 
-! d88" 888 d88" 888 888        888     888     "Y88b. 888 Y888P 888 888     888 
-! 888  888 888  888 888    888 888     888       "888 888  Y8P  888 888     888 
-! Y88b 888 Y88b 888 Y88b  d88P Y88b. .d88P Y88b  d88P 888   "   888 Y88b. .d88P 
-!  "Y88888  "Y88888  "Y8888P"   "Y88888P"   "Y8888P"  888       888  "Y88888P"  
-!                                                                              
+!
+!      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b.
+!      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b
+!      888      888 888    888 888     888 Y88b.      88888b.d88888 888     888
+!  .d88888  .d88888 888        888     888  "Y888b.   888Y88888P888 888     888
+! d88" 888 d88" 888 888        888     888     "Y88b. 888 Y888P 888 888     888
+! 888  888 888  888 888    888 888     888       "888 888  Y8P  888 888     888
+! Y88b 888 Y88b 888 Y88b  d88P Y88b. .d88P Y88b  d88P 888   "   888 Y88b. .d88P
+!  "Y88888  "Y88888  "Y8888P"   "Y88888P"   "Y8888P"  888       888  "Y88888P"
+!
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  COPYRIGHT (C) 2015 by Filippo Lipparini, Benjamin Stamm, Eric Cancès,       !
@@ -21,10 +21,10 @@ implicit none
 ! A modular implementation of COSMO using a domain decomposition linear scaling
 ! strategy.
 !
-! This code is governed by the LGPL license and abiding by the rules of 
+! This code is governed by the LGPL license and abiding by the rules of
 ! distribution of free software.
-! This program is distributed in the hope that it will be useful, but  
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+! This program is distributed in the hope that it will be useful, but
+! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 ! or FITNESS FOR A PARTICULAR PURPOSE.
 ! See the GNU Lesser General Public License for more details.
 !
@@ -36,7 +36,7 @@ implicit none
 !     J. Chem. Phys. 139, 054111 (2013)
 !
 ! [2] F. Lipparini, B. Stamm, E. Cancès, Y. Maday, B. Mennucci
-!     "Fast Domain Decomposition Algorithm for Continuum Solvation Models: 
+!     "Fast Domain Decomposition Algorithm for Continuum Solvation Models:
 !      Energy and First Derivatives"
 !     J. Chem. Theory Comput. 9, 3637–3648 (2013)
 !
@@ -46,14 +46,14 @@ implicit none
 !
 ! [3] F. Lipparini, G. Scalmani, L. Lagardère, B. Stamm, E. Cancès, Y. Maday,
 !     J.-P. Piquemal, M. J. Frisch, B. Mennucci
-!     "Quantum, classical, and hybrid QM/MM calculations in solution: General 
+!     "Quantum, classical, and hybrid QM/MM calculations in solution: General
 !      implementation of the ddCOSMO linear scaling strategy"
 !     J. Chem. Phys. 141, 184108 (2014)
 !     (for quantum mechanical models)
 !
 ! [4] F. Lipparini, L. Lagardère, G. Scalmani, B. Stamm, E. Cancès, Y. Maday,
 !     J.-P. Piquemal, M. J. Frisch, B. Mennucci
-!     "Quantum Calculations in Solution for Large to Very Large Molecules: 
+!     "Quantum Calculations in Solution for Large to Very Large Molecules:
 !      A New Linear Scaling QM/Continuum Approach"
 !     J. Phys. Chem. Lett. 5, 953-958 (2014)
 !     (for semiempirical models)
@@ -63,7 +63,7 @@ implicit none
 !     "Polarizable Molecular Dynamics in a Polarizable Continuum Solvent"
 !     J. Chem. Theory Comput. 11, 623-634 (2015)
 !     (for classical models, including polarizable force fields
-!     
+!
 ! The users of this code should also include the appropriate reference to the
 ! COSMO model. This distribution includes the routines to generate lebedev
 ! grids by D. Laikov and C. van Wuellen, as publicly available on CCL. If the routines
@@ -77,18 +77,18 @@ implicit none
 ! Written by Filippo Lipparini, October 2015.
 !
 integer, parameter :: ndiis=25, iout=6, nngmax=100
-real*8,  parameter :: zero=0.d0, pt5=0.5d0, one=1.d0, two=2.d0, four=4.d0
+real(8),  parameter :: zero=0.d0, pt5=0.5d0, one=1.d0, two=2.d0, four=4.d0
 !
 integer :: nsph, ngrid, ncav, lmax, nbasis, iconv, igrad, &
            iprint, nproc, memuse, memmax
-real*8  :: eps, eta, pi, sq2
+real(8) :: eps, eta, pi, sq2
 logical :: grad
 !
 integer, allocatable :: inl(:), nl(:)
-real*8,  allocatable :: rsph(:), csph(:,:), ccav(:,:)
-real*8,  allocatable :: w(:), grid(:,:), basis(:,:)
-real*8,  allocatable :: fact(:), facl(:), facs(:)
-real*8,  allocatable :: fi(:,:), ui(:,:), zi(:,:,:)
+real(8),  allocatable :: rsph(:), csph(:,:), ccav(:,:)
+real(8),  allocatable :: w(:), grid(:,:), basis(:,:)
+real(8),  allocatable :: fact(:), facl(:), facs(:)
+real(8),  allocatable :: fi(:,:), ui(:,:), zi(:,:,:)
 !
 contains
 subroutine ddinit(n,x,y,z,rvdw)
@@ -98,17 +98,18 @@ implicit none
 ! assemble the cavity and the various associated geometrical quantities.
 !
 integer,               intent(in) :: n
-real*8,  dimension(n), intent(in) :: x, y, z, rvdw
+real(8),  dimension(n), intent(in) :: x, y, z, rvdw
 !
 integer :: isph, jsph, i, ii, lnl, l, ind, m, igrid, inear, jnear
-real*8  :: fac, fl, ffl, fnorm, d2, r2, v(3), vv, t, xt, swthr
+real(8)  :: fac, fl, ffl, fnorm, d2, r2, v(3), vv, t, xt, swthr
 !
-real*8,  allocatable :: vcos(:), vsin(:), vplm(:)
+real(8),  allocatable :: vcos(:), vsin(:), vplm(:)
 integer, parameter   :: nllg=32
 !
 integer, dimension(nllg) :: ng0
 data ng0/6,14,26,38,50,74,86,110,146,170,194,230,266,302,350,434,590,770,974, &
          1202,1454,1730,2030,2354,2702,3074,3470,3890,4334,4802,5294,5810/
+
 !
 ! openMP parallelization:
 !
@@ -184,7 +185,10 @@ rsph      = rvdw
 !
 ! load a lebedev grid:
 !
-call llgrid(ngrid,w,grid)
+call ld_by_order(ngrid, grid(1, :), grid(2, :), grid(3, :), w)
+! Scaling because the weights are normalised
+w = 4.0d0*pi*w
+
 !
 ! build a basis of spherical harmonics at the gridpoints:
 !
@@ -278,17 +282,17 @@ implicit none
 !
 ! deallocate the arrays:
 !
-if(allocated(rsph))  deallocate(rsph)  
-if(allocated(csph))  deallocate(csph)  
-if(allocated(ccav))  deallocate(ccav)  
-if(allocated(w))     deallocate(w)     
-if(allocated(grid))  deallocate(grid)  
-if(allocated(basis)) deallocate(basis) 
-if(allocated(inl))   deallocate(inl)   
-if(allocated(nl))    deallocate(nl)    
-if(allocated(fact))  deallocate(fact)  
-if(allocated(facl))  deallocate(facl)  
-if(allocated(facs))  deallocate(facs)  
+if(allocated(rsph))  deallocate(rsph)
+if(allocated(csph))  deallocate(csph)
+if(allocated(ccav))  deallocate(ccav)
+if(allocated(w))     deallocate(w)
+if(allocated(grid))  deallocate(grid)
+if(allocated(basis)) deallocate(basis)
+if(allocated(inl))   deallocate(inl)
+if(allocated(nl))    deallocate(nl)
+if(allocated(fact))  deallocate(fact)
+if(allocated(facl))  deallocate(facl)
+if(allocated(facs))  deallocate(facs)
 if(allocated(ui))    deallocate(ui)
 if(allocated(fi))    deallocate(fi)
 if(allocated(zi))    deallocate(zi)
@@ -298,13 +302,13 @@ memuse = memuse - 4*nsph - 4*ngrid - nbasis*ngrid - nsph-1 - nsph*nngmax - &
 if (grad) memuse = memuse - 3*ngrid*nsph
 end subroutine memfree
 !
-real*8 function sprod(n,u,v)
+real(8) function sprod(n,u,v)
 implicit none
 integer,               intent(in) :: n
-real*8,  dimension(n), intent(in) :: u, v
+real(8),  dimension(n), intent(in) :: u, v
 !
 integer :: i
-real*8  :: ss
+real(8)  :: ss
 !
 ss = zero
 do i = 1, n
@@ -314,12 +318,12 @@ sprod = ss
 return
 end function sprod
 !
-real*8 function fsw(t,eta)
+real(8) function fsw(t,eta)
 implicit none
-real*8, intent(in) :: t, eta
+real(8), intent(in) :: t, eta
 !
-real*8 :: a, b, flow
-real*8, parameter :: f6=6.0d0, f10=10.d0, f12=12.d0, f15=15.d0
+real(8) :: a, b, flow
+real(8), parameter :: f6=6.0d0, f10=10.d0, f12=12.d0, f15=15.d0
 flow = one - eta
 if (t.ge.one) then
   fsw = zero
@@ -333,14 +337,14 @@ end if
 return
 end function fsw
 !
-real*8 function dfsw(t,eta)
+real(8) function dfsw(t,eta)
 implicit none
-real*8, intent(in) :: t, eta
+real(8), intent(in) :: t, eta
 !
 ! switching function derivative for ddCOSMO regularization.
 !
-real*8  flow
-real*8, parameter :: f30=30.0d0
+real(8)  flow
+real(8), parameter :: f30=30.0d0
 !
 flow = one - eta
 if (t.ge.one) then
@@ -360,14 +364,14 @@ implicit none
 !
 character (len=*), intent(in) :: label
 integer, intent(in)           :: ncol, icol
-real*8, dimension(ngrid,ncol), intent(in) :: x
+real(8), dimension(ngrid,ncol), intent(in) :: x
 !
 integer :: ig, noff, nprt, ic, j
 !
 ! print an header:
 !
 if (ncol.eq.1) then
-  write (iout,'(3x,a,1x,"(column ",i4")")') label, icol
+  write (iout,'(3x,a,1x,"(column ",i4,")")') label, icol
 else
   write (iout,'(3x,a)') label
 end if
@@ -404,14 +408,14 @@ implicit none
 !
 character (len=*), intent(in) :: label
 integer, intent(in)           :: ncol, icol
-real*8, dimension(nbasis,ncol), intent(in) :: x
+real(8), dimension(nbasis,ncol), intent(in) :: x
 !
 integer :: l, m, ind, noff, nprt, ic, j
 !
 ! print an header:
 !
 if (ncol.eq.1) then
-  write (iout,'(3x,a,1x,"(column ",i4")")') label, icol
+  write (iout,'(3x,a,1x,"(column ",i4,")")') label, icol
 else
   write (iout,'(3x,a)') label
 end if
@@ -457,15 +461,15 @@ implicit none
 !
 logical, intent(in) :: first
 integer, intent(in) :: isph
-real*8, dimension(ngrid),       intent(in)    :: g
-real*8, dimension(nbasis,nsph), intent(in)    :: sigma
-real*8, dimension(ngrid),       intent(inout) :: pot
-real*8, dimension(nbasis),      intent(inout) :: basloc, vplm
-real*8, dimension(lmax+1),      intent(inout) :: vcos, vsin
+real(8), dimension(ngrid),       intent(in)    :: g
+real(8), dimension(nbasis,nsph), intent(in)    :: sigma
+real(8), dimension(ngrid),       intent(inout) :: pot
+real(8), dimension(nbasis),      intent(inout) :: basloc, vplm
+real(8), dimension(lmax+1),      intent(inout) :: vcos, vsin
 !
 integer :: ig, ij, jsph
-real*8  :: vij(3), sij(3)
-real*8  :: vvij, tij, xij, oij
+real(8)  :: vij(3), sij(3)
+real(8)  :: vvij, tij, xij, oij
 !
 pot = g
 if (first) return
@@ -476,7 +480,7 @@ do ig = 1, ngrid
       jsph = nl(ij)
       vij  = csph(:,isph) + rsph(isph)*grid(:,ig) - csph(:,jsph)
       vvij = sqrt(dot_product(vij,vij))
-      tij  = vvij/rsph(jsph) 
+      tij  = vvij/rsph(jsph)
       if (tij.lt.one) then
         sij  = vij/vvij
         xij  = fsw(tij,eta*rsph(jsph))
@@ -498,8 +502,8 @@ end subroutine calcv
 subroutine intrhs(isph,x,xlm)
 implicit none
 integer, intent(in) :: isph
-real*8, dimension(ngrid),  intent(in)    :: x
-real*8, dimension(nbasis), intent(inout) :: xlm
+real(8), dimension(ngrid),  intent(in)    :: x
+real(8), dimension(nbasis), intent(inout) :: xlm
 !
 integer ig
 xlm = zero
@@ -517,8 +521,8 @@ end subroutine intrhs
 subroutine solve(isph,vlm,slm)
 implicit none
 integer, intent(in) :: isph
-real*8, dimension(nbasis), intent(in)    :: vlm
-real*8, dimension(nbasis), intent(inout) :: slm
+real(8), dimension(nbasis), intent(in)    :: vlm
+real(8), dimension(nbasis), intent(inout) :: slm
 !
 slm = facl*vlm
 !
@@ -530,15 +534,15 @@ subroutine diis(n,nmat,x,e,b,xnew)
 implicit none
 integer,                             intent(in)    :: n
 integer,                             intent(inout) :: nmat
-real*8,  dimension(n,ndiis),         intent(inout) :: x, e
-real*8,  dimension(ndiis+1,ndiis+1), intent(inout) :: b
-real*8,  dimension(n),               intent(inout) :: xnew
+real(8),  dimension(n,ndiis),         intent(inout) :: x, e
+real(8),  dimension(ndiis+1,ndiis+1), intent(inout) :: b
+real(8),  dimension(n),               intent(inout) :: xnew
 !
 integer :: nmat1, i
 integer :: j, k
 logical :: ok
 !
-real*8, allocatable :: bloc(:,:), cex(:)
+real(8), allocatable :: bloc(:,:), cex(:)
 !
 if (nmat.ge.ndiis) then
   do j = 2, nmat - 10
@@ -578,11 +582,11 @@ end subroutine diis
 subroutine makeb(n,nmat,e,b)
 implicit none
 integer, intent(in) :: n, nmat
-real*8, dimension(n,ndiis),         intent(in) :: e
-real*8, dimension(ndiis+1,ndiis+1), intent(inout) :: b
+real(8), dimension(n,ndiis),         intent(in) :: e
+real(8), dimension(ndiis+1,ndiis+1), intent(inout) :: b
 !
 integer :: i
-real*8  :: bij
+real(8)  :: bij
 
 if (nmat.eq.1) then
 !
@@ -618,12 +622,12 @@ end subroutine makeb
 !
 subroutine ylmbas(x,basloc,vplm,vcos,vsin)
 implicit none
-real*8, dimension(3), intent(in) :: x
-real*8, dimension(nbasis), intent(inout) :: basloc, vplm
-real*8, dimension(lmax+1), intent(inout) :: vcos, vsin
+real(8), dimension(3), intent(in) :: x
+real(8), dimension(nbasis), intent(inout) :: basloc, vplm
+real(8), dimension(lmax+1), intent(inout) :: vcos, vsin
 !
 integer :: l, m, ind
-real*8  :: cthe, sthe, cphi, sphi, plm
+real(8)  :: cthe, sthe, cphi, sphi, plm
 !
 ! get cos(\theta), sin(\theta), cos(\phi) and sin(\phi) from the cartesian
 ! coordinates of x.
@@ -638,8 +642,8 @@ else
   sphi = zero
 end if
 !
-! evaluate cos(m*phi) and sin(m*phi) arrays. notice that this is 
-! pointless if z = 1, as the only non vanishing terms will be the 
+! evaluate cos(m*phi) and sin(m*phi) arrays. notice that this is
+! pointless if z = 1, as the only non vanishing terms will be the
 ! ones with m=0.
 !
 if(sthe.ne.zero) then
@@ -673,14 +677,14 @@ end subroutine ylmbas
 !
 subroutine dbasis(x,basloc,dbsloc,vplm,vcos,vsin)
 implicit none
-real*8, dimension(3),        intent(in)    :: x
-real*8, dimension(nbasis),   intent(inout) :: basloc, vplm
-real*8, dimension(3,nbasis), intent(inout) :: dbsloc
-real*8, dimension(lmax+1),   intent(inout) :: vcos, vsin
+real(8), dimension(3),        intent(in)    :: x
+real(8), dimension(nbasis),   intent(inout) :: basloc, vplm
+real(8), dimension(3,nbasis), intent(inout) :: dbsloc
+real(8), dimension(lmax+1),   intent(inout) :: vcos, vsin
 !
 integer :: l, m, ind
-real*8  :: cthe, sthe, cphi, sphi, plm, fln, pp1, pm1, pp
-real*8  :: et(3), ep(3)
+real(8)  :: cthe, sthe, cphi, sphi, plm, fln, pp1, pm1, pp
+real(8)  :: et(3), ep(3)
 !
 ! get cos(\theta), sin(\theta), cos(\phi) and sin(\phi) from the cartesian
 ! coordinates of x.
@@ -710,8 +714,8 @@ else
   ep(3) = zero
 endif
 !
-! evaluate cos(m*phi) and sin(m*phi) arrays. notice that this is 
-! pointless if z = 1, as the only non vanishing terms will be the 
+! evaluate cos(m*phi) and sin(m*phi) arrays. notice that this is
+! pointless if z = 1, as the only non vanishing terms will be the
 ! ones with m=0.
 !
 if(sthe.ne.zero) then
@@ -765,8 +769,8 @@ end subroutine dbasis
 !
 subroutine polleg(x,y,plm)
 implicit none
-real*8,                    intent(in)    :: x, y
-real*8, dimension(nbasis), intent(inout) :: plm
+real(8),                    intent(in)    :: x, y
+real(8), dimension(nbasis), intent(inout) :: plm
 !
 ! computes the l,m associated legendre polynomial for -1 <= x <= 1
 ! using the recurrence formula
@@ -774,12 +778,12 @@ real*8, dimension(nbasis), intent(inout) :: plm
 !   (l-m)p(l,m) = x(2l-1)p(l-1,m) - (l+m-1)p(l-2,m)
 !
 integer :: m, ind, l, ind2
-real*8  :: fact, pmm, somx2, pmm1, pmmo, pll, fm, fl
+real(8)  :: fact, pmm, somx2, pmm1, pmmo, pll, fm, fl
 !
 fact  = one
 pmm   = one
 somx2 = y
-do m = 0, lmax 
+do m = 0, lmax
   ind      = (m + 1)*(m + 1)
   plm(ind) = pmm
   if(m.eq.lmax) return
@@ -791,7 +795,7 @@ do m = 0, lmax
   do l = m+2, lmax
     fl = dble(l)
     pll   = (x*(two*fl - one)*pmm1 - (fl + fm - one)*pmm)/(fl - fm)
-    ind = l*l + l + 1 
+    ind = l*l + l + 1
     plm(ind+m) = pll
     pmm  = pmm1
     pmm1 = pll
@@ -805,8 +809,8 @@ end subroutine polleg
 !
 subroutine trgev(x,y,cx,sx)
 implicit none
-real*8, intent(in) :: x, y
-real*8, dimension(lmax+1), intent(inout) :: cx, sx
+real(8), intent(in) :: x, y
+real(8), dimension(lmax+1), intent(inout) :: cx, sx
 !
 integer :: m
 !
@@ -821,13 +825,13 @@ end do
 return
 end subroutine trgev
 !
-real*8 function intmlp(t,sigma,basloc)
+real(8) function intmlp(t,sigma,basloc)
 implicit none
-real*8, intent(in) :: t
-real*8, dimension(nbasis), intent(in) :: sigma, basloc
+real(8), intent(in) :: t
+real(8), dimension(nbasis), intent(in) :: sigma, basloc
 !
 integer :: l, ind
-real*8  :: tt, ss, fac
+real(8)  :: tt, ss, fac
 !
 tt = one
 ss = zero
@@ -844,32 +848,32 @@ end function intmlp
 subroutine itsolv(star,phi,psi,sigma,ene)
 implicit none
 logical,                        intent(in)    :: star
-real*8, dimension(ncav),        intent(in)    :: phi
-real*8, dimension(nbasis,nsph), intent(in)    :: psi
-real*8,                         intent(inout) :: ene
-real*8, dimension(nbasis,nsph), intent(inout) :: sigma
+real(8), dimension(ncav),        intent(in)    :: phi
+real(8), dimension(nbasis,nsph), intent(in)    :: psi
+real(8),                         intent(inout) :: ene
+real(8), dimension(nbasis,nsph), intent(inout) :: sigma
 !
 ! local arrays:
 !
-real*8, allocatable :: g(:,:), pot(:), sigold(:,:), vlm(:), xi(:,:)
+real(8), allocatable :: g(:,:), pot(:), sigold(:,:), vlm(:), xi(:,:)
 !
 ! scratch arrays:
 !
-real*8, allocatable :: basloc(:), vplm(:), vcos(:), vsin(:)
-real*8, allocatable :: delta(:), norm(:)
+real(8), allocatable :: basloc(:), vplm(:), vcos(:), vsin(:)
+real(8), allocatable :: delta(:), norm(:)
 !
 ! diis arrays:
 !
-real*8, allocatable :: xdiis(:,:,:), ediis(:,:,:), bmat(:)
+real(8), allocatable :: xdiis(:,:,:), ediis(:,:,:), bmat(:)
 !
 ! local variables:
 !
 integer :: it, isph, nmat, lenb, ig, c1, c2, cr
-real*8  :: tol, drms, dmax, fep
+real(8)  :: tol, drms, dmax, fep
 logical :: dodiis, first
 !
 integer, parameter :: nitmax=300
-real*8,  parameter :: ten=10.d0, tredis=1.0d-2
+real(8),  parameter :: ten=10.d0, tredis=1.0d-2
 !
 ! initialize the timer:
 !
@@ -910,7 +914,7 @@ if (.not. star) then
     first = it.eq.1
     vlm   = zero
 !$omp parallel do default(shared) private(basloc,vcos,vsin,vplm) &
-!$omp private(isph,pot,vlm,delta) schedule(dynamic,10) 
+!$omp private(isph,pot,vlm,delta) schedule(dynamic,10)
     do isph = 1, nsph
       call calcv(first,isph,g(:,isph),pot,sigold,basloc,vplm,vcos,vsin)
       call intrhs(isph,pot,vlm)
@@ -933,7 +937,7 @@ if (.not. star) then
     if (drms.le.tol) goto 900
     sigold = sigma
   end do
-  write(iout,1020) 
+  write(iout,1020)
   stop
 900 continue
   ene = pt5*fep*sprod(nbasis*nsph,sigma,psi)
@@ -976,7 +980,7 @@ else
     if (drms.le.tol) goto 910
     sigold = sigma
   end do
-  write(iout,1020) 
+  write(iout,1020)
   stop
 910 continue
 end if
@@ -1018,8 +1022,8 @@ end subroutine itsolv
 subroutine wghpot(phi,g)
 implicit none
 !
-real*8, dimension(ncav),       intent(in)    :: phi
-real*8, dimension(ngrid,nsph), intent(inout) :: g
+real(8), dimension(ncav),       intent(in)    :: phi
+real(8), dimension(ngrid,nsph), intent(inout) :: g
 !
 integer isph, ig, ic
 !
@@ -1038,11 +1042,11 @@ end subroutine wghpot
 !
 subroutine hsnorm(u,unorm)
 implicit none
-real*8, dimension(nbasis), intent(in)    :: u
-real*8,                    intent(inout) :: unorm
+real(8), dimension(nbasis), intent(in)    :: u
+real(8),                    intent(inout) :: unorm
 !
 integer :: l, m, ind
-real*8  :: fac
+real(8)  :: fac
 !
 ! compute the energy norm of a vector
 !
@@ -1066,14 +1070,14 @@ implicit none
 !
 logical,                       intent(in)    :: first
 integer,                       intent(in)    :: isph
-real*8, dimension(nbasis),     intent(in)    :: psi
-real*8, dimension(ngrid,nsph), intent(in)    :: xi
-real*8, dimension(nbasis),     intent(inout) :: vlm
-real*8, dimension(nbasis),     intent(inout) :: basloc, vplm
-real*8, dimension(lmax+1),     intent(inout) :: vcos, vsin
+real(8), dimension(nbasis),     intent(in)    :: psi
+real(8), dimension(ngrid,nsph), intent(in)    :: xi
+real(8), dimension(nbasis),     intent(inout) :: vlm
+real(8), dimension(nbasis),     intent(inout) :: basloc, vplm
+real(8), dimension(lmax+1),     intent(inout) :: vcos, vsin
 !
 integer :: ij, jsph, ig, l, ind, m
-real*8  :: vji(3), vvji, tji, sji(3), xji, oji, fac, ffac, t
+real(8)  :: vji(3), vvji, tji, sji(3), xji, oji, fac, ffac, t
 vlm = psi
 if (first) return
 !
@@ -1112,8 +1116,8 @@ end subroutine adjrhs
 subroutine rmsvec(n,v,vrms,vmax)
 implicit none
 integer,               intent(in)    :: n
-real*8,  dimension(n), intent(in)    :: v
-real*8,                intent(inout) :: vrms, vmax
+real(8),  dimension(n), intent(in)    :: v
+real(8),                intent(inout) :: vrms, vmax
 !
 integer i
 vrms = zero
@@ -1131,14 +1135,14 @@ implicit none
 !
 integer,                    intent(in)    :: n, nrhs
 logical,                    intent(inout) :: ok
-real*8,  dimension(n,n),    intent(inout) :: a
-real*8,  dimension(n,nrhs), intent(inout) :: b
+real(8),  dimension(n,n),    intent(inout) :: a
+real(8),  dimension(n,nrhs), intent(inout) :: b
 !
 integer :: i, j, k, irow, icol
-real*8  :: big, dum, pinv
+real(8)  :: big, dum, pinv
 !
 integer, allocatable :: indxc(:), indxr(:), piv(:)
-real*8,  allocatable :: scr(:)
+real(8),  allocatable :: scr(:)
 !
 allocate (indxc(n), indxr(n), piv(n))
 allocate (scr(n))
@@ -1175,10 +1179,10 @@ do i = 1, n
   if (irow.ne.icol) then
     scr         = a(irow,:)
     a(irow,:)   = a(icol,:)
-    a(icol,:)   = scr  
+    a(icol,:)   = scr
     scr(1:nrhs) = b(irow,:)
     b(irow,:)   = b(icol,:)
-    b(icol,:)   = scr(1:nrhs)       
+    b(icol,:)   = scr(1:nrhs)
   end if
 !
   indxr(i) = irow
@@ -1248,16 +1252,16 @@ end subroutine header
 subroutine fdoka(isph,sigma,xi,basloc,dbsloc,vplm,vcos,vsin,fx)
 implicit none
 integer,                         intent(in)    :: isph
-real*8,  dimension(nbasis,nsph), intent(in)    :: sigma
-real*8,  dimension(ngrid),       intent(in)    :: xi
-real*8,  dimension(nbasis),      intent(inout) :: basloc, vplm
-real*8,  dimension(3,nbasis),    intent(inout) :: dbsloc
-real*8,  dimension(lmax+1),      intent(inout) :: vcos, vsin
-real*8,  dimension(3),           intent(inout) :: fx
+real(8),  dimension(nbasis,nsph), intent(in)    :: sigma
+real(8),  dimension(ngrid),       intent(in)    :: xi
+real(8),  dimension(nbasis),      intent(inout) :: basloc, vplm
+real(8),  dimension(3,nbasis),    intent(inout) :: dbsloc
+real(8),  dimension(lmax+1),      intent(inout) :: vcos, vsin
+real(8),  dimension(3),           intent(inout) :: fx
 !
 integer :: ig, ij, jsph, l, ind, m
-real*8  :: vvij, tij, xij, oij, t, fac, fl, f1, f2, f3, beta
-real*8  :: vij(3), sij(3), alp(3), va(3)
+real(8)  :: vvij, tij, xij, oij, t, fac, fl, f1, f2, f3, beta
+real(8)  :: vij(3), sij(3), alp(3), va(3)
 !
 do ig = 1, ngrid
   va = zero
@@ -1307,18 +1311,18 @@ end subroutine fdoka
 subroutine fdokb(isph,sigma,xi,basloc,dbsloc,vplm,vcos,vsin,fx)
 implicit none
 integer,                         intent(in)    :: isph
-real*8,  dimension(nbasis,nsph), intent(in)    :: sigma
-real*8,  dimension(ngrid,nsph),  intent(in)    :: xi
-real*8,  dimension(nbasis),      intent(inout) :: basloc, vplm
-real*8,  dimension(3,nbasis),    intent(inout) :: dbsloc
-real*8,  dimension(lmax+1),      intent(inout) :: vcos, vsin
-real*8,  dimension(3),           intent(inout) :: fx
+real(8),  dimension(nbasis,nsph), intent(in)    :: sigma
+real(8),  dimension(ngrid,nsph),  intent(in)    :: xi
+real(8),  dimension(nbasis),      intent(inout) :: basloc, vplm
+real(8),  dimension(3,nbasis),    intent(inout) :: dbsloc
+real(8),  dimension(lmax+1),      intent(inout) :: vcos, vsin
+real(8),  dimension(3),           intent(inout) :: fx
 !
 integer :: ig, ji, jsph, l, ind, m, jk, ksph
 logical :: proc
-real*8  :: vvji, tji, xji, oji, t, fac, fl, f1, f2, beta, di
-real*8  :: b, g1, g2, vvjk, tjk, f, xjk
-real*8  :: vji(3), sji(3), alp(3), vb(3), vjk(3), sjk(3), vc(3)
+real(8)  :: vvji, tji, xji, oji, t, fac, fl, f1, f2, beta, di
+real(8)  :: b, g1, g2, vvjk, tjk, xjk
+real(8)  :: vji(3), sji(3), alp(3), vb(3), vjk(3), sjk(3), vc(3)
 !
 do ig = 1, ngrid
   vb = zero
@@ -1387,7 +1391,7 @@ do ig = 1, ngrid
       end if
       f2 = (one-fac)*di*dfsw(tji,eta*rsph(isph))/rsph(isph)
       vb = vb + f2*xi(ig,jsph)*beta*sji
-    end if 
+    end if
   end do
   fx = fx + w(ig)*(vb - vc)
 ! fx = fx - w(ig)*vc
@@ -1398,12 +1402,12 @@ end subroutine fdokb
 subroutine fdoga(isph,xi,phi,fx)
 implicit none
 integer,                        intent(in)    :: isph
-real*8,  dimension(ngrid,nsph), intent(in)    :: xi, phi
-real*8,  dimension(3),          intent(inout) :: fx
+real(8),  dimension(ngrid,nsph), intent(in)    :: xi, phi
+real(8),  dimension(3),          intent(inout) :: fx
 !
 integer :: ig, ji, jsph
-real*8  :: vvji, tji, fac, swthr
-real*8  :: alp(3), vji(3), sji(3)
+real(8)  :: vvji, tji, fac, swthr
+real(8)  :: alp(3), vji(3), sji(3)
 !
 do ig = 1, ngrid
   alp = zero
@@ -1424,7 +1428,7 @@ do ig = 1, ngrid
   end do
   fx = fx - w(ig)*alp
 end do
-return 
+return
 end subroutine fdoga
 !
 end module ddcosmo

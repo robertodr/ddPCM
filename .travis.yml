@@ -1,0 +1,51 @@
+language: c
+sudo: false
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8
+            - gcc-4.8
+            - gfortran-4.8
+      env:
+        - C_COMPILER='gcc-4.8'
+        - Fortran_COMPILER='gfortran-4.8'
+        - BUILD_TYPE='release'
+    - os: osx
+      osx_image: xcode7.3
+      compiler: gcc
+      env:
+        - C_COMPILER='gcc-4.8'
+        - Fortran_COMPILER='gfortran-4.8'
+        - BUILD_TYPE='release'
+        - HOMEBREW_GCC='homebrew/versions/gcc48'
+install:
+- |
+  if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    brew install cmake
+    brew reinstall ${HOMEBREW_GCC}
+  else
+    DEPS_DIR="${HOME}/deps"
+    mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
+    mkdir ${DEPS_DIR}/cmake
+    wget --no-check-certificate https://cmake.org/files/v3.4/cmake-3.4.3-Linux-x86_64.tar.gz
+    tar --strip-components=1 -xzf cmake-3.4.3-Linux-x86_64.tar.gz -C cmake
+    export PATH=${DEPS_DIR}/cmake/bin:$PATH
+    cd -
+  fi
+before_script:
+- cd ${TRAVIS_BUILD_DIR}
+- export CC=${C_COMPILER}
+- ${C_COMPILER} --version
+- export FC=${Fortran_COMPILER}
+- ${Fortran_COMPILER} --version
+- python setup --fc=${Fortran_COMPILER} --type=${BUILD_TYPE} --omp --cmake-options='-Hprojects/CMake'
+- cd build
+script:
+- cmake --build . -- --jobs=2 VERBOSE=1
+- ctest --output-on-failure --verbose

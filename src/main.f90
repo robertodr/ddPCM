@@ -1,15 +1,15 @@
 program main
 use ddcosmo
-! 
-!      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b.  
-!      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b 
-!      888      888 888    888 888     888 Y88b.      88888b.d88888 888     888 
-!  .d88888  .d88888 888        888     888  "Y888b.   888Y88888P888 888     888 
-! d88" 888 d88" 888 888        888     888     "Y88b. 888 Y888P 888 888     888 
-! 888  888 888  888 888    888 888     888       "888 888  Y8P  888 888     888 
-! Y88b 888 Y88b 888 Y88b  d88P Y88b. .d88P Y88b  d88P 888   "   888 Y88b. .d88P 
-!  "Y88888  "Y88888  "Y8888P"   "Y88888P"   "Y8888P"  888       888  "Y88888P"  
-!                                                                              
+!
+!      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b.
+!      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b
+!      888      888 888    888 888     888 Y88b.      88888b.d88888 888     888
+!  .d88888  .d88888 888        888     888  "Y888b.   888Y88888P888 888     888
+! d88" 888 d88" 888 888        888     888     "Y88b. 888 Y888P 888 888     888
+! 888  888 888  888 888    888 888     888       "888 888  Y8P  888 888     888
+! Y88b 888 Y88b 888 Y88b  d88P Y88b. .d88P Y88b  d88P 888   "   888 Y88b. .d88P
+!  "Y88888  "Y88888  "Y8888P"   "Y88888P"   "Y8888P"  888       888  "Y88888P"
+!
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  COPYRIGHT (C) 2015 by Filippo Lipparini, Benjamin Stamm, Eric Cancès,       !
@@ -21,10 +21,10 @@ use ddcosmo
 ! A modular implementation of COSMO using a domain decomposition linear scaling
 ! strategy.
 !
-! This code is governed by the LGPL license and abiding by the rules of 
+! This code is governed by the LGPL license and abiding by the rules of
 ! distribution of free software.
-! This program is distributed in the hope that it will be useful, but  
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+! This program is distributed in the hope that it will be useful, but
+! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 ! or FITNESS FOR A PARTICULAR PURPOSE.
 ! See the GNU Lesser General Public License for more details.
 !
@@ -36,7 +36,7 @@ use ddcosmo
 !     J. Chem. Phys. 139, 054111 (2013)
 !
 ! [2] F. Lipparini, B. Stamm, E. Cancès, Y. Maday, B. Mennucci
-!     "Fast Domain Decomposition Algorithm for Continuum Solvation Models: 
+!     "Fast Domain Decomposition Algorithm for Continuum Solvation Models:
 !      Energy and First Derivatives"
 !     J. Chem. Theory Comput. 9, 3637–3648 (2013)
 !
@@ -46,14 +46,14 @@ use ddcosmo
 !
 ! [3] F. Lipparini, G. Scalmani, L. Lagardère, B. Stamm, E. Cancès, Y. Maday,
 !     J.-P. Piquemal, M. J. Frisch, B. Mennucci
-!     "Quantum, classical, and hybrid QM/MM calculations in solution: General 
+!     "Quantum, classical, and hybrid QM/MM calculations in solution: General
 !      implementation of the ddCOSMO linear scaling strategy"
 !     J. Chem. Phys. 141, 184108 (2014)
 !     (for quantum mechanical models)
 !
 ! [4] F. Lipparini, L. Lagardère, G. Scalmani, B. Stamm, E. Cancès, Y. Maday,
 !     J.-P. Piquemal, M. J. Frisch, B. Mennucci
-!     "Quantum Calculations in Solution for Large to Very Large Molecules: 
+!     "Quantum Calculations in Solution for Large to Very Large Molecules:
 !      A New Linear Scaling QM/Continuum Approach"
 !     J. Phys. Chem. Lett. 5, 953-958 (2014)
 !     (for semiempirical models)
@@ -63,7 +63,7 @@ use ddcosmo
 !     "Polarizable Molecular Dynamics in a Polarizable Continuum Solvent"
 !     J. Chem. Theory Comput. 11, 623-634 (2015)
 !     (for classical models, including polarizable force fields
-!     
+!
 ! The users of this code should also include the appropriate reference to the
 ! COSMO model. This distribution includes the routines to generate lebedev
 ! grids by D. Laikov and C. van Wuellen, as publicly available on CCL. If the routines
@@ -92,30 +92,32 @@ use ddcosmo
 implicit none
 !
 integer :: i, n
-real*8  :: tobohr, esolv
-real*8, parameter :: toang=0.52917721092d0, tokcal=627.509469d0
+real(8)  :: tobohr, esolv
+real(8), parameter :: toang=0.52917721092d0, tokcal=627.509469d0
 !
 ! quantities to be allocated by the user.
 ! - solute's parameters, such as coordinates, vdw radii and
 !   point charges used to model the solute (or multipoles, or
 !   qm density...)
 !
-real*8, allocatable :: x(:), y(:), z(:), rvdw(:), charge(:)
+real(8), allocatable :: x(:), y(:), z(:), rvdw(:), charge(:)
 !
 ! - electrostatic potential phi(ncav) and psi vector psi(nbasis,n)
 !
-real*8, allocatable :: phi(:), psi(:,:)
+real(8), allocatable :: phi(:), psi(:,:)
 !
 ! - ddcosmo solution sigma (nbasis,n) and adjoint solution s(nbasis,n)
 !
-real*8, allocatable :: sigma(:,:), s(:,:)
+real(8), allocatable :: sigma(:,:), s(:,:)
 !
 ! - forces:
 !
-real*8, allocatable :: fx(:,:)
+real(8), allocatable :: fx(:,:)
 !
 ! - for qm solutes, fock matrix contribution.
 !
+
+logical :: out_open, out_exists
 ! here, we read all the ddcosmo parameters from a file named Input.txt
 !
 memuse = 0
@@ -156,6 +158,22 @@ z    = z*tobohr
 rvdw = rvdw*tobohr
 !
 close (100)
+
+inquire(file = 'Output.out', opened = out_open, exist = out_exists)
+if (out_exists) then
+   open(unit = 6,           &
+       file = 'Output.out', &
+       status = 'unknown',  &
+       form = 'formatted',  &
+       access = 'sequential')
+   close(unit = 6, status = 'delete')
+end if
+open(unit = 6,           &
+    file = 'Output.out', &
+    status = 'new',      &
+    form = 'formatted',  &
+    access = 'sequential')
+rewind(6)
 !
 ! call the initialization routine. this routine allocates memory, computes some
 ! quantities for internal use and creates and fills an array ccav(3,ncav) with
@@ -169,19 +187,19 @@ allocate (phi(ncav),psi(nbasis,n))
 memuse = memuse + ncav + nbasis*n
 memmax = max(memmax,memuse)
 !
-! --------------------------   modify here  --------------------------  
+! --------------------------   modify here  --------------------------
 !
 ! place here your favorite routine to assemble the solute's electrostatic potential
 ! and the "psi" vector. Such a routine should replace "mkrhs".
 ! for classical solutes, assembling the psi vector is straightforward; for qm solutes
-! it requires a numerical integration (similar to the one used to compute the xc 
+! it requires a numerical integration (similar to the one used to compute the xc
 ! contributions in dft), as detaild in J. Chem. Phys. 141, 184108
 ! here, we compute the potential and the psi vector using the supplied routine mkrhs,
 ! which needs to be replaced by your routine.
 !
 call mkrhs(n,charge,x,y,z,ncav,ccav,phi,nbasis,psi)
 !
-! --------------------------   end modify   --------------------------  
+! --------------------------   end modify   --------------------------
 !
 ! now, call the ddcosmo solver
 !
@@ -191,11 +209,11 @@ memuse = memuse + nbasis*n
 memmax = max(memmax,memuse)
 !
 call itsolv(.false.,phi,psi,sigma,esolv)
-write (6,'(1x,a,f14.6)') 'ddcosmo electrostatic solvation energy (kcal/mol):', esolv*tokcal
+write (6,'(1x,a,f20.12)') 'ddcosmo electrostatic solvation energy (kcal/mol):', esolv*tokcal
 !
 ! this is all for the energy. if the forces are also required, call the solver for
-! the adjoint problem. 
-! the solution to the adjoint system is required also to compute the Fock matrix 
+! the adjoint problem.
+! the solution to the adjoint system is required also to compute the Fock matrix
 ! contributions.
 !
 if (igrad.eq.1) then
@@ -206,7 +224,7 @@ if (igrad.eq.1) then
   memmax = max(memmax,memuse)
   call itsolv(.true.,phi,psi,s,esolv)
 !
-! now call the routine that computes the forces. such a routine requires the potential 
+! now call the routine that computes the forces. such a routine requires the potential
 ! derivatives at the cavity points and the electric field at the cavity points: it has
 ! therefore to be personalized by the user. it is included in this sample program as
 ! forces.f90.
@@ -224,5 +242,6 @@ if (igrad.eq.1) deallocate (s,fx)
 call memfree
 !
 write(6,*) 'maximum quantity of memory allocated:', memmax
+close(6)
 !
 end program main

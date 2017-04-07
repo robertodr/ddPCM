@@ -31,10 +31,15 @@
 *build*/
 
 # Python stuff
-*.pyc
+*.py[cod]
 
 # Autocmake stuff
-cmake/lib/*.pyc
+cmake/lib/*.py[cod]
 
 # emacs backup
 *~
+
+# Testing
+tests/*/*.out*
+tests/*/*.stdout
+tests/*/*.stderr

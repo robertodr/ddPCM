@@ -83,15 +83,15 @@ implicit none
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !
 integer,                      intent(in)    :: n, ncav, nbasis
-real*8,  dimension(n),        intent(in)    :: x, y, z, charge
-real*8,  dimension(3,ncav),   intent(in)    :: ccav
-real*8,  dimension(ncav),     intent(inout) :: phi
-real*8,  dimension(nbasis,n), intent(inout) :: psi
+real(8),  dimension(n),        intent(in)    :: x, y, z, charge
+real(8),  dimension(3,ncav),   intent(in)    :: ccav
+real(8),  dimension(ncav),     intent(inout) :: phi
+real(8),  dimension(nbasis,n), intent(inout) :: psi
 !
 integer :: isph, ic, j
-real*8  :: v
-real*8  :: dx, dy, dz, d2, d, pi, fac
-real*8, parameter :: zero=0.0d0, one=1.0d0, four=4.0d0
+real(8)  :: v
+real(8)  :: dx, dy, dz, d2, d, pi, fac
+real(8), parameter :: zero=0.0d0, one=1.0d0, four=4.0d0
 !
 pi  = four*atan(one)
 fac = sqrt(four*pi)
