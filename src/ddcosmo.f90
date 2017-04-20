@@ -1,5 +1,6 @@
 module ddcosmo
 implicit none
+private
 !
 !      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b.
 !      888      888 d88P  Y88b d88P" "Y88b d88P  Y88b 8888b   d8888 d88P" "Y88b
@@ -76,23 +77,50 @@ implicit none
 !
 ! Written by Filippo Lipparini, October 2015.
 !
-integer, parameter :: ndiis=25, iout=6, nngmax=100
-real(8),  parameter :: zero=0.d0, pt5=0.5d0, one=1.d0, two=2.d0, four=4.d0
+integer, parameter, public :: ndiis=25, iout=6, nngmax=100
+real(8), parameter, public :: zero=0.d0, pt5=0.5d0, one=1.d0, two=2.d0, four=4.d0
 !
-integer :: nsph, ngrid, ncav, lmax, nbasis, iconv, igrad, &
-           iprint, nproc, memuse, memmax
-real(8) :: eps, eta, pi, sq2
+integer, public :: nsph
+integer, public :: ngrid
+integer, public :: ncav
+integer, public :: lmax
+integer, public :: nbasis
+integer, public :: iconv
+integer, public :: igrad
+integer, public :: iprint
+integer, public :: nproc
+integer, public :: memuse
+integer, public :: memmax
+real(8), public :: eps
+real(8), public :: eta
+real(8) :: pi, sq2
 logical :: grad
 !
-integer, allocatable :: inl(:), nl(:)
-real(8),  allocatable :: rsph(:), csph(:,:), ccav(:,:)
-real(8),  allocatable :: w(:), grid(:,:), basis(:,:)
-real(8),  allocatable :: fact(:), facl(:), facs(:)
-real(8),  allocatable :: fi(:,:), ui(:,:), zi(:,:,:)
+integer, allocatable :: inl(:)
+integer, allocatable :: nl(:)
+real(8), allocatable :: rsph(:)
+real(8), allocatable, public :: csph(:,:)
+real(8), allocatable, public :: ccav(:,:)
+real(8), allocatable, public :: w(:)
+real(8), allocatable :: grid(:,:)
+real(8), allocatable, public :: basis(:,:)
+real(8), allocatable :: fact(:)
+real(8), allocatable :: facl(:)
+real(8), allocatable :: facs(:)
+real(8), allocatable :: fi(:,:)
+real(8), allocatable, public :: ui(:,:)
+real(8), allocatable :: zi(:,:,:)
 !
+
+public ddinit
+public fdoga
+public fdoka
+public fdokb
+public itsolv
+public memfree
+
 contains
 subroutine ddinit(n,x,y,z,rvdw)
-implicit none
 !
 ! allocate the various arrays needed for ddcosmo,
 ! assemble the cavity and the various associated geometrical quantities.
@@ -278,7 +306,6 @@ return
 end subroutine ddinit
 !
 subroutine memfree
-implicit none
 !
 ! deallocate the arrays:
 !
@@ -303,7 +330,6 @@ if (grad) memuse = memuse - 3*ngrid*nsph
 end subroutine memfree
 !
 real(8) function sprod(n,u,v)
-implicit none
 integer,               intent(in) :: n
 real(8),  dimension(n), intent(in) :: u, v
 !
@@ -319,7 +345,6 @@ return
 end function sprod
 !
 real(8) function fsw(t,eta)
-implicit none
 real(8), intent(in) :: t, eta
 !
 real(8) :: a, b, flow
@@ -338,7 +363,6 @@ return
 end function fsw
 !
 real(8) function dfsw(t,eta)
-implicit none
 real(8), intent(in) :: t, eta
 !
 ! switching function derivative for ddCOSMO regularization.
@@ -358,7 +382,6 @@ return
 end function dfsw
 !
 subroutine ptcart(label,ncol,icol,x)
-implicit none
 !
 ! dump an array (ngrid,ncol) or just a column.
 !
@@ -402,7 +425,6 @@ return
 end subroutine ptcart
 !
 subroutine prtsph(label,ncol,icol,x)
-implicit none
 !
 ! dump an array (nbasis,ncol) or just a column.
 !
@@ -455,7 +477,6 @@ return
 end subroutine prtsph
 !
 subroutine calcv(first,isph,g,pot,sigma,basloc,vplm,vcos,vsin)
-implicit none
 !
 ! computes a line of the (sparse) matrix/vector product for ddCOSMO.
 !
@@ -500,7 +521,6 @@ return
 end subroutine calcv
 !
 subroutine intrhs(isph,x,xlm)
-implicit none
 integer, intent(in) :: isph
 real(8), dimension(ngrid),  intent(in)    :: x
 real(8), dimension(nbasis), intent(inout) :: xlm
@@ -519,7 +539,6 @@ return
 end subroutine intrhs
 !
 subroutine solve(isph,vlm,slm)
-implicit none
 integer, intent(in) :: isph
 real(8), dimension(nbasis), intent(in)    :: vlm
 real(8), dimension(nbasis), intent(inout) :: slm
@@ -531,7 +550,6 @@ return
 end subroutine solve
 !
 subroutine diis(n,nmat,x,e,b,xnew)
-implicit none
 integer,                             intent(in)    :: n
 integer,                             intent(inout) :: nmat
 real(8),  dimension(n,ndiis),         intent(inout) :: x, e
@@ -580,7 +598,6 @@ return
 end subroutine diis
 !
 subroutine makeb(n,nmat,e,b)
-implicit none
 integer, intent(in) :: n, nmat
 real(8), dimension(n,ndiis),         intent(in) :: e
 real(8), dimension(ndiis+1,ndiis+1), intent(inout) :: b
@@ -621,7 +638,6 @@ return
 end subroutine makeb
 !
 subroutine ylmbas(x,basloc,vplm,vcos,vsin)
-implicit none
 real(8), dimension(3), intent(in) :: x
 real(8), dimension(nbasis), intent(inout) :: basloc, vplm
 real(8), dimension(lmax+1), intent(inout) :: vcos, vsin
@@ -676,7 +692,6 @@ return
 end subroutine ylmbas
 !
 subroutine dbasis(x,basloc,dbsloc,vplm,vcos,vsin)
-implicit none
 real(8), dimension(3),        intent(in)    :: x
 real(8), dimension(nbasis),   intent(inout) :: basloc, vplm
 real(8), dimension(3,nbasis), intent(inout) :: dbsloc
@@ -768,7 +783,6 @@ return
 end subroutine dbasis
 !
 subroutine polleg(x,y,plm)
-implicit none
 real(8),                    intent(in)    :: x, y
 real(8), dimension(nbasis), intent(inout) :: plm
 !
@@ -808,7 +822,6 @@ return
 end subroutine polleg
 !
 subroutine trgev(x,y,cx,sx)
-implicit none
 real(8), intent(in) :: x, y
 real(8), dimension(lmax+1), intent(inout) :: cx, sx
 !
@@ -826,7 +839,6 @@ return
 end subroutine trgev
 !
 real(8) function intmlp(t,sigma,basloc)
-implicit none
 real(8), intent(in) :: t
 real(8), dimension(nbasis), intent(in) :: sigma, basloc
 !
@@ -846,7 +858,6 @@ return
 end function intmlp
 !
 subroutine itsolv(star,phi,psi,sigma,ene)
-implicit none
 logical,                        intent(in)    :: star
 real(8), dimension(ncav),        intent(in)    :: phi
 real(8), dimension(nbasis,nsph), intent(in)    :: psi
@@ -1020,7 +1031,6 @@ return
 end subroutine itsolv
 !
 subroutine wghpot(phi,g)
-implicit none
 !
 real(8), dimension(ncav),       intent(in)    :: phi
 real(8), dimension(ngrid,nsph), intent(inout) :: g
@@ -1041,7 +1051,6 @@ return
 end subroutine wghpot
 !
 subroutine hsnorm(u,unorm)
-implicit none
 real(8), dimension(nbasis), intent(in)    :: u
 real(8),                    intent(inout) :: unorm
 !
@@ -1064,7 +1073,6 @@ return
 end subroutine hsnorm
 !
 subroutine adjrhs(first,isph,psi,xi,vlm,basloc,vplm,vcos,vsin)
-implicit none
 !
 ! compute a line of the (sparse) adjoint ddcosmo matrix/vector product.
 !
@@ -1114,7 +1122,6 @@ return
 end subroutine adjrhs
 !
 subroutine rmsvec(n,v,vrms,vmax)
-implicit none
 integer,               intent(in)    :: n
 real(8),  dimension(n), intent(in)    :: v
 real(8),                intent(inout) :: vrms, vmax
@@ -1131,7 +1138,6 @@ return
 end subroutine rmsvec
 !
 subroutine gjinv(n,nrhs,a,b,ok)
-implicit none
 !
 integer,                    intent(in)    :: n, nrhs
 logical,                    intent(inout) :: ok
@@ -1225,7 +1231,6 @@ return
 end subroutine gjinv
 !
 subroutine header
-implicit none
 !
 1000 format( /,&
              '      888      888  .d8888b.   .d88888b.   .d8888b.  888b     d888  .d88888b. ',/,  &
@@ -1250,7 +1255,6 @@ return
 end subroutine header
 !
 subroutine fdoka(isph,sigma,xi,basloc,dbsloc,vplm,vcos,vsin,fx)
-implicit none
 integer,                         intent(in)    :: isph
 real(8),  dimension(nbasis,nsph), intent(in)    :: sigma
 real(8),  dimension(ngrid),       intent(in)    :: xi
@@ -1309,7 +1313,6 @@ return
 end subroutine fdoka
 !
 subroutine fdokb(isph,sigma,xi,basloc,dbsloc,vplm,vcos,vsin,fx)
-implicit none
 integer,                         intent(in)    :: isph
 real(8),  dimension(nbasis,nsph), intent(in)    :: sigma
 real(8),  dimension(ngrid,nsph),  intent(in)    :: xi
@@ -1400,7 +1403,6 @@ return
 end subroutine fdokb
 !
 subroutine fdoga(isph,xi,phi,fx)
-implicit none
 integer,                        intent(in)    :: isph
 real(8),  dimension(ngrid,nsph), intent(in)    :: xi, phi
 real(8),  dimension(3),          intent(inout) :: fx
