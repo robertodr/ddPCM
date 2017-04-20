@@ -6,6 +6,7 @@ default_build_type: debug
 modules:
 - plugins:
   - source:
+    - 'custom/GNUdirs.cmake'
     - '%(url_root)modules/default_build_paths.cmake'
     - '%(url_root)modules/definitions.cmake'
     - '%(url_root)modules/safeguards.cmake'
@@ -14,6 +15,7 @@ modules:
     - '%(url_root)modules/fc.cmake'
     - '%(url_root)modules/omp.cmake'
     - 'custom/compilers/FortranFlags.cmake'
+    - 'custom/compilers/Fortran_C.cmake'
 - general:
   - source:
     - '%(url_root)modules/git_info/git_info.cmake'

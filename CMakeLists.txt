@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
 # project name
-project(ddPCM Fortran)
+project(ddPCM)
 
 # do not rebuild if rules (compiler flags) change
 set(CMAKE_SKIP_RULE_DEPENDENCY TRUE)
@@ -21,12 +21,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/custom/co
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/downloaded)
 
 # included cmake modules
+include(GNUdirs)
 include(autocmake_default_build_paths)
 include(autocmake_definitions)
 include(autocmake_safeguards)
 include(autocmake_fc)
 include(autocmake_omp)
 include(FortranFlags)
+include(Fortran_C)
 include(autocmake_git_info)
 include(autocmake_python_interpreter)
 include(autocmake_src)
